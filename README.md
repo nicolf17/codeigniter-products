@@ -1,69 +1,89 @@
-# CodeIgniter 4 Application Starter
+# Inventario de productos
 
-## What is CodeIgniter?
+Aplicación web sencilla para administrar un catálogo: permite crear, consultar, editar y eliminar productos, además de ver su precio y existencias.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Requisitos
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- PHP 8.2 o superior.
+- Composer 2.
+- MySQL o MariaDB.
+- Extensiones PHP `intl`, `mbstring` y `mysqli` habilitadas.
+- Conexión a Internet para cargar Bootstrap desde CDN.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+Comprueba que PHP y Composer estén disponibles:
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+```powershell
+php -v
+composer --version
+```
 
-## Installation & updates
+Para revisar las extensiones de PHP:
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+```powershell
+php -m
+```
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## Instalación rápida (Windows / PowerShell)
 
-## Setup
+Abre PowerShell en la carpeta del proyecto, donde está este `README.md`, y ejecuta:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```powershell
+composer install
+Copy-Item env .env
+```
 
-## Important Change with index.php
+1. Crea una base de datos vacía en MySQL/MariaDB. Por ejemplo:
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+   ```sql
+   CREATE DATABASE ci_products CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+   ```
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+2. Abre `.env` y configura el entorno y la conexión. Quita `#` de estas opciones y ajusta usuario y contraseña a tu instalación:
 
-**Please** read the user guide for a better explanation of how CI4 works!
+   ```ini
+   CI_ENVIRONMENT = development
+   app.baseURL = 'http://localhost:8080/'
 
-## Repository Management
+   database.default.hostname = localhost
+   database.default.database = ci_products
+   database.default.username = root
+   database.default.password = tu_contraseña
+   database.default.DBDriver = MySQLi
+   database.default.port = 3306
+   ```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+   Si tu usuario de MySQL no tiene contraseña, deja el valor vacío:
+   `database.default.password =`.
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+3. Desde la carpeta del proyecto, crea las tablas ejecutando las migraciones:
 
-## Server Requirements
+   ```powershell
+   php spark migrate
+   ```
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+4. Inicia el servidor local:
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+   ```powershell
+   php spark serve
+   ```
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+5. Abre [http://localhost:8080](http://localhost:8080). La página principal redirige al inventario de productos.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+## Comandos útiles
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Ejecuta las pruebas automatizadas con:
+
+```powershell
+composer test
+```
+
+Las pruebas que usan SQLite necesitan también la extensión PHP `sqlite3`; no es necesaria para ejecutar la aplicación con MySQL.
+
+Para detener el servidor local, presiona `Ctrl+C` en la terminal.
+
+## Notas
+
+- La tabla `products` se crea mediante las migraciones incluidas en `app/Database/Migrations`.
+- No hay datos de ejemplo; agrega el primer producto desde **Agregar producto**.
+- No subas el archivo `.env` ni guardes contraseñas reales en el repositorio.
+- En un servidor de producción, configura el servidor web para que apunte a la carpeta `public` y no al directorio raíz del proyecto.

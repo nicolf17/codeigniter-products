@@ -397,7 +397,7 @@
                         <path d="m3 12 9 5 9-5M3 16l9 5 9-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
                     </svg>
                 </span>
-                Administra
+                CodeIgniter
             </a>
             <a class="topbar-link active" href="<?= site_url('products') ?>">Productos</a>
         </div>
